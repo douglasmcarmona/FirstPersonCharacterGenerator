@@ -1,4 +1,4 @@
-Copyright (c) 2026 [Your Name or Company]
+Copyright (c) 2026 Douglas Mendes Carmona
 All Rights Reserved.
 
 This repository contains proprietary software.
