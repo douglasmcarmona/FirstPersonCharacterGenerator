@@ -1,0 +1,127 @@
+﻿
+########################################
+# Unreal Engine - Generated Files
+########################################
+
+[Bb]uild/
+[Bb]uilds/
+[Bb]inaries/
+[Bb]uild/
+[Dd]erivedDataCache/
+[Ii]ntermediate/
+[Ss]aved/
+
+# Plugin-generated files
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
+
+# Generated map data
+*_BuiltData.uasset
+
+########################################
+# JetBrains Rider
+########################################
+
+# Rider project and workspace files
+.idea/
+
+# RiderLink (generated integration plugin)
+**/RiderLink/
+
+# Rider user-specific files
+*.sln.iml
+*.sln.docstates
+*.rsuser
+
+# Rider caches
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/shelf/
+
+########################################
+# Visual Studio
+########################################
+
+.vs/
+*.sln
+*.suo
+*.user
+*.userosscache
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.sdf
+*.pdb
+*.opendb
+
+########################################
+# Generated Project Files
+########################################
+
+*.sln
+*.xcodeproj/
+*.xcworkspace/
+Makefile
+*.generated.h
+*.gen.cpp
+
+########################################
+# Compiled Files
+########################################
+
+*.o
+*.obj
+*.lo
+*.slo
+*.pch
+*.gch
+*.lib
+*.a
+*.la
+*.dll
+*.dylib
+*.so
+*.exe
+*.app
+*.ipa
+
+########################################
+# Operating System
+########################################
+
+# Windows
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.directory
+
+########################################
+# Temporary Files
+########################################
+
+*.tmp
+*.temp
+*.bak
+*.log
+*.swp
+*.swo
+*.orig
+
+########################################
+# Miscellaneous IDEs
+########################################
+
+.vscode/
+.history/
+
+[Cc]ontent/
+[Ss]ource/
