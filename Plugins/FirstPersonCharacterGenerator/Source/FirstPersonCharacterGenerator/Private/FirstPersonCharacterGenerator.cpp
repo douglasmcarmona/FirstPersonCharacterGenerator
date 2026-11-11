@@ -1,0 +1,62 @@
+#include "FirstPersonCharacterGenerator.h"
+
+#include "ToolMenus.h"
+#include "WorkspaceMenuStructure.h"
+#include "WorkspaceMenuStructureModule.h"
+#include "Framework/Commands/UIAction.h"
+#include "Interfaces/IPluginManager.h"
+#include "Styling/SlateStyleRegistry.h"
+
+#define LOCTEXT_NAMESPACE "FFirstPersonCharacterGeneratorModule"
+
+const FName FFirstPersonCharacterGeneratorModule::FPCharacterGeneratorTabName(TEXT("First Person Character Generator"));
+
+void FFirstPersonCharacterGeneratorModule::StartupModule()
+{
+	PluginStyleSet = MakeShared<FSlateStyleSet>(FName("FirstPersonCharacterGeneratorStyle"));
+	const FString PluginDir = IPluginManager::Get().FindPlugin(TEXT("FirstPersonCharacterGenerator"))->GetBaseDir();
+	PluginStyleSet->SetContentRoot(	PluginDir / TEXT("Resources"));
+	PluginStyleSet->Set(
+		"FirstPersonCharacterGenerator.Icon",
+		new FSlateImageBrush(
+			PluginStyleSet->RootToContentDir(
+				TEXT("Icon128"),
+				TEXT(".png")
+			),
+			FVector2D(16.0f, 16.0f)
+		)
+	);
+
+	FSlateStyleRegistry::RegisterSlateStyle(*PluginStyleSet);
+	
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
+		FPCharacterGeneratorTabName,
+		FOnSpawnTab::CreateRaw(this, &FFirstPersonCharacterGeneratorModule::SpawnGeneratorTab))
+	.SetDisplayName(LOCTEXT("FirstPersonCharacterGenerator", "First Person Character Generator"))
+	.SetTooltipText(LOCTEXT("FirstPersonCharacterGeneratorTooltip", 
+		"Generates a basic first-person character with movement and camera control capabilities (at least)"))
+	.SetMenuType(ETabSpawnerMenuType::Enabled)
+	.SetIcon(FSlateIcon(PluginStyleSet->GetStyleSetName(), "FirstPersonCharacterGenerator.Icon"))
+	.SetGroup(WorkspaceMenu::GetMenuStructure().GetToolsCategory());
+}
+
+TSharedRef<SDockTab> FFirstPersonCharacterGeneratorModule::SpawnGeneratorTab(const FSpawnTabArgs& Args)
+{
+	return SNew(SDockTab)
+		.TabRole(NomadTab)
+		[
+			SNew(STextBlock)
+			.Text(LOCTEXT("FirstPersonCharacterGeneratorText", "First Person Character Generator"))
+		];
+}
+
+void FFirstPersonCharacterGeneratorModule::ShutdownModule()
+{
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FPCharacterGeneratorTabName);
+	FSlateStyleRegistry::UnRegisterSlateStyle(*PluginStyleSet);
+	PluginStyleSet.Reset();
+}
+
+#undef LOCTEXT_NAMESPACE
+
+IMPLEMENT_MODULE(FFirstPersonCharacterGeneratorModule, FirstPersonCharacterGenerator)
