@@ -23,7 +23,8 @@ public class FirstPersonCharacterGenerator : ModuleRules
 				"Slate",
 				"SlateCore",
 				"WorkspaceMenuStructure",
-				"Projects"
+				"Projects",
+				"UMG"
 			}
 			);
 	}

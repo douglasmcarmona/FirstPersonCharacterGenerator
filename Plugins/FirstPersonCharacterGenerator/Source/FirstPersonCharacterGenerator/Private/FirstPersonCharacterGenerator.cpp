@@ -3,9 +3,11 @@
 #include "ToolMenus.h"
 #include "WorkspaceMenuStructure.h"
 #include "WorkspaceMenuStructureModule.h"
+#include "Blueprint/UserWidget.h"
 #include "Framework/Commands/UIAction.h"
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
+#include "UI/FPCharacterGeneratorWidget.h"
 
 #define LOCTEXT_NAMESPACE "FFirstPersonCharacterGeneratorModule"
 
@@ -42,11 +44,30 @@ void FFirstPersonCharacterGeneratorModule::StartupModule()
 
 TSharedRef<SDockTab> FFirstPersonCharacterGeneratorModule::SpawnGeneratorTab(const FSpawnTabArgs& Args)
 {
+	UClass* GeneratorWidgetClass = LoadClass<UFPCharacterGeneratorWidget>(
+		nullptr, TEXT("/FirstPersonCharacterGenerator/FPCGW_Main.FPCGW_Main_C"));	
+	if (!GeneratorWidgetClass) return GetErrorTab(Args);
+	
+	UWorld* World = GEditor->GetEditorWorldContext().World();
+	if (!World) return GetErrorTab(Args);
+	
+	GeneratorWidget = TStrongObjectPtr(
+		CreateWidget<UFPCharacterGeneratorWidget>(World, GeneratorWidgetClass));
+	if (!GeneratorWidget) return GetErrorTab(Args);
+	
 	return SNew(SDockTab)
 		.TabRole(NomadTab)
 		[
+			GeneratorWidget->TakeWidget()
+		];
+}
+
+TSharedRef<SDockTab> FFirstPersonCharacterGeneratorModule::GetErrorTab(const FSpawnTabArgs& Args) const
+{
+	return SNew(SDockTab).TabRole(NomadTab)
+		[
 			SNew(STextBlock)
-			.Text(LOCTEXT("FirstPersonCharacterGeneratorText", "First Person Character Generator"))
+			.Text(LOCTEXT("ErrorText", "Unable to load main widget"))
 		];
 }
 

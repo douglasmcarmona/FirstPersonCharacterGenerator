@@ -4,6 +4,8 @@
 
 #include "Modules/ModuleManager.h"
 
+class UFPCharacterGeneratorWidget;
+
 class FFirstPersonCharacterGeneratorModule : public IModuleInterface
 {
 public:
@@ -13,6 +15,9 @@ public:
 	
 private:
 	TSharedRef<SDockTab> SpawnGeneratorTab(const FSpawnTabArgs& Args);
+	TSharedRef<SDockTab> GetErrorTab(const FSpawnTabArgs& Args) const;
+	
 	static const FName FPCharacterGeneratorTabName;
-	TSharedPtr<FSlateStyleSet> PluginStyleSet; 
+	TSharedPtr<FSlateStyleSet> PluginStyleSet;
+	TStrongObjectPtr<UFPCharacterGeneratorWidget> GeneratorWidget;	
 };
