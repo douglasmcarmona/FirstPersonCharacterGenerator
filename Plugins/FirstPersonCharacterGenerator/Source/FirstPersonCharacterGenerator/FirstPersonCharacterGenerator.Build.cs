@@ -24,7 +24,9 @@ public class FirstPersonCharacterGenerator : ModuleRules
 				"SlateCore",
 				"WorkspaceMenuStructure",
 				"Projects",
-				"UMG"
+				"UMG",
+				"GameProjectGeneration",
+				"DesktopPlatform"
 			}
 			);
 	}
