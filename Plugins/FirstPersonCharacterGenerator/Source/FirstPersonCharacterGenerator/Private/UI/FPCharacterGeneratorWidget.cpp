@@ -85,4 +85,8 @@ void UFPCharacterGeneratorWidget::CalculateFileNames(const FString& EntityName, 
 {
 	HeaderFile = DefaultHeaderPath + Path /= EntityName + FString(".h");
 	SourceFile = DefaultSourcePath + Path /= EntityName + FString(".cpp");
+	
+	FText EntityError;
+	const bool bIsValid = GameProjectUtils::IsValidClassNameForCreation(EntityName, EntityError);
+	OnFileNameValidation.Broadcast(bIsValid, EntityError);	
 }

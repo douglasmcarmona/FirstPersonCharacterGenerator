@@ -7,6 +7,13 @@
 #include "FPCharacterGeneratorWidget.generated.h"
 
 struct FModuleContextInfo;
+
+/**
+ * Called each time path and entity name content change to validate them
+ * @param bIsValid True if the resulting file names are valid. False otherwise
+ * @param ErrorMessage The reason the content has been considered invalid
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnFileNameValidationSignature, bool const, bIsValid, const FText&, ErrorMessage);
 /**
  * Our plugin's main window. Entry point to the designer's settings used to create all classes and assets later on
  */
@@ -46,6 +53,9 @@ protected:
 	 */
 	UPROPERTY(BlueprintReadOnly)
 	FString DefaultEntityName = FString("MyFPCharacter");
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnFileNameValidationSignature OnFileNameValidation;
 
 	/**
 	 * Gives the plugin context to calculate the destination of source and header files
