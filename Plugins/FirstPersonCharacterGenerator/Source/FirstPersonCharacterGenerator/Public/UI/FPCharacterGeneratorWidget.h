@@ -17,6 +17,7 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorWidget : public UUs
 	
 public:
 	UFPCharacterGeneratorWidget(const FObjectInitializer& ObjectInitializer);
+	void SetWidgetController(UObject* InWidgetController);
 	
 protected:
 	/**
@@ -58,4 +59,7 @@ protected:
 	 * Gives the plugin context to calculate the destination of source and header files
 	 */
 	TSharedPtr<FModuleContextInfo> ModuleContextInfo;
+	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UObject> WidgetController;
 };

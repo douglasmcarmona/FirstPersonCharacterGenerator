@@ -10,6 +10,7 @@
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "UI/FPCharacterGeneratorWidget.h"
+#include "UI/WidgetController/FPCharacterGeneratorWidgetController.h"
 
 #define LOCTEXT_NAMESPACE "FFirstPersonCharacterGeneratorModule"
 
@@ -56,6 +57,8 @@ TSharedRef<SDockTab> FFirstPersonCharacterGeneratorModule::SpawnGeneratorTab(con
 	GeneratorWidget = TStrongObjectPtr(
 		CreateWidget<UFPCharacterGeneratorWidget>(World, GeneratorWidgetClass));
 	if (!GeneratorWidget) return GetErrorTab(Args);
+	
+	GeneratorWidget->SetWidgetController(NewObject<UFPCharacterGeneratorWidgetController>());
 	
 	return SNew(SDockTab)
 		.TabRole(NomadTab)

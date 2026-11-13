@@ -27,12 +27,15 @@ UFPCharacterGeneratorWidget::UFPCharacterGeneratorWidget(const FObjectInitialize
 		DefaultHeaderPath, 
 		DefaultSourcePath);
 	
-	DefaultHeaderPath /= FString("Public/");
-	DefaultSourcePath /= FString("Private/");
+}
+
+void UFPCharacterGeneratorWidget::SetWidgetController(UObject* InWidgetController)
+{
+	WidgetController = InWidgetController;
 }
 
 void UFPCharacterGeneratorWidget::ValidateData(const FString& EntityName, const FString& Path, FString& HeaderFile,
-	FString& SourceFile, bool& bIsDataValid, FText& ErrorMessage) const
+                                               FString& SourceFile, bool& bIsDataValid, FText& ErrorMessage) const
 {
 	HeaderFile = DefaultHeaderPath + Path /= EntityName + FString(".h");
 	SourceFile = DefaultSourcePath + Path /= EntityName + FString(".cpp");
