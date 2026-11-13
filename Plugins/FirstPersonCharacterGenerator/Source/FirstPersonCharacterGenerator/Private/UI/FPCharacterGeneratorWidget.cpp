@@ -1,18 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/FPCharacterGeneratorWidget.h"
-
-#include "DesktopPlatformModule.h"
 #include "GameProjectUtils.h"
 #include "SourceCodeNavigation.h"
-
-/**
- * - Plugin tab starts with module root
- * - In that case, the Path text box should be empty
- * - The value typed in the Path text box must be appended to the Public and Private resulting paths
- * - If the resulting paths don't exist, create them.
- */
 
 static TSet<FString> InvalidEntityNames = FSourceCodeNavigation::GetSourceFileDatabase().GetDisallowedHeaderNames();
 
