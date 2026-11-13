@@ -1,0 +1,32 @@
+﻿%COPYRIGHT_LINE%
+
+%PCH_INCLUDE_DIRECTIVE%
+%MY_HEADER_INCLUDE_DIRECTIVE%
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+
+%PREFIXED_CLASS_NAME%::%PREFIXED_CLASS_NAME%()
+{ 	
+	PrimaryActorTick.bCanEverTick = false;
+}
+
+void %PREFIXED_CLASS_NAME%::BeginPlay()
+{
+	Super::BeginPlay();
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());    
+    if (Subsystem)
+    {
+    	Subsystem->AddMappingContext(DefaultMappingContext, 0);
+    }
+}
+
+void %PREFIXED_CLASS_NAME%::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void %PREFIXED_CLASS_NAME%::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	%SETUP_PLAYER_INPUT_COMPONENT%
+}

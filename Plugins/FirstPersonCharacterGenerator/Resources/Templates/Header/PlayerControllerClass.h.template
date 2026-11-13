@@ -1,0 +1,31 @@
+﻿%COPYRIGHT_LINE%
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/PlayerController.h"
+#include "%UNPREFIXED_CLASS_NAME%.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
+
+UCLASS(%UCLASS_SPECIFIER_LIST%)
+class %CLASS_MODULE_API_MACRO%%PREFIXED_CLASS_NAME% : public %PREFIXED_BASE_CLASS_NAME%
+{
+	GENERATED_BODY()
+
+public:	
+	%PREFIXED_CLASS_NAME%();
+	virtual void Tick(float DeltaTime) override;	
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:	
+	virtual void BeginPlay() override;
+	
+	%INPUT_ACTION_BOUND_FUNCTION_DECLARATIONS%
+	
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;	
+	
+	%INPUT_ACTION_PROPERTIES%
+};
