@@ -27,14 +27,21 @@ public:
 	
 protected:
 	/**
-	 * Updates the calculated names for the resulting header(.h) and source(.cpp) files
+	 * Updates the UI after assembling and validating incoming data
 	 * @param EntityName Used as the file name
-	 * @param Path Subfolder path structure where the files must follow
+	 * @param Path Subfolder path structure which the files must follow
 	 * @param HeaderFile Output parameter with the resulting header file name
 	 * @param SourceFile Output parameter with the resulting source file name
+	 * @param bIsDataValid True if file name and path validation succeeded. False otherwise
+	 * @param ErrorMessage Reason why the validation didn't succeed
 	 */
 	UFUNCTION(BlueprintCallable)
-	void CalculateFileNames(const FString& EntityName, const FString& Path, FString& HeaderFile, FString& SourceFile) const;
+	void ValidateData(const FString& EntityName, 
+		const FString& Path, 
+		FString& HeaderFile, 
+		FString& SourceFile,
+		bool& bIsDataValid,
+		FText& ErrorMessage) const;
 
 	/**
 	 * Initial header path. Defaults to MainModule/Public

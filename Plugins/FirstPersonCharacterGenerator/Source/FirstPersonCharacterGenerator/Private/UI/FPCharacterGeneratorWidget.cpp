@@ -5,49 +5,7 @@
 
 #include "DesktopPlatformModule.h"
 #include "GameProjectUtils.h"
-/**
-	 * Given the path provided, work out where generated .h and .cpp files would be placed
-	 *
-	 * @param	InPath				The path to use a base
-	 * @param	ModuleInfo			Information about the module being validated
-	 * @param	OutHeaderPath		The path where the .h file should be placed
-	 * @param	OutSourcePath		The path where the .cpp file should be placed
-	 * @param	OutFailReason		Optional parameter to fill with failure information
-	 *
-	 * @return	false if the paths are invalid
-	 
-	static UE_API bool CalculateSourcePaths(
-	const FString& InPath, 
-	const FModuleContextInfo& ModuleInfo,
-	FString& OutHeaderPath,
-	FString& OutSourcePath,
-	FText* const OutFailReason = nullptr);*/
-
-/**
-* Given the path provided, work out where it's located within the Source folder
-*
-* @param	InPath				The path to use a base
-* @param	ModuleInfo			Information about the module being validated
-* @param	OutClassLocation	The location within the Source folder
-* @param	OutFailReason		Optional parameter to fill with failure information
-*
-* @return	false if the paths are invalid
-	 
-static UE_API bool GetClassLocation(
-const FString& InPath,
-const FModuleContextInfo& ModuleInfo,
-EClassLocation& OutClassLocation,
-FText* const OutFailReason = nullptr);	
-*/
-
-//FSourceCodeNavigation::GetSourceFileDatabase().GetDisallowedHeaderNames()
-
-/** Returns true if the specified class name is properly formed and does not conflict with another class, including source/header files
-	static UE_API bool IsValidClassNameForCreation(
-	const FString& NewClassName, 
-	const FModuleContextInfo& ModuleInfo, 
-	const TSet<FString>& DisallowedHeaderNames,
-	FText& OutFailReason);*/
+#include "SourceCodeNavigation.h"
 
 /**
  * - Plugin tab starts with module root
@@ -55,6 +13,8 @@ FText* const OutFailReason = nullptr);
  * - The value typed in the Path text box must be appended to the Public and Private resulting paths
  * - If the resulting paths don't exist, create them.
  */
+
+static TSet<FString> InvalidEntityNames = FSourceCodeNavigation::GetSourceFileDatabase().GetDisallowedHeaderNames();
 
 UFPCharacterGeneratorWidget::UFPCharacterGeneratorWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -81,12 +41,14 @@ UFPCharacterGeneratorWidget::UFPCharacterGeneratorWidget(const FObjectInitialize
 	DefaultSourcePath /= FString("Private/");
 }
 
-void UFPCharacterGeneratorWidget::CalculateFileNames(const FString& EntityName, const FString& Path, FString& HeaderFile, FString& SourceFile) const
+void UFPCharacterGeneratorWidget::ValidateData(const FString& EntityName, const FString& Path, FString& HeaderFile,
+	FString& SourceFile, bool& bIsDataValid, FText& ErrorMessage) const
 {
 	HeaderFile = DefaultHeaderPath + Path /= EntityName + FString(".h");
 	SourceFile = DefaultSourcePath + Path /= EntityName + FString(".cpp");
 	
-	FText EntityError;
-	const bool bIsValid = GameProjectUtils::IsValidClassNameForCreation(EntityName, EntityError);
-	OnFileNameValidation.Broadcast(bIsValid, EntityError);	
+	bIsDataValid = FPaths::ValidatePath(DefaultHeaderPath + Path, &ErrorMessage);
+	if (!bIsDataValid) return;	
+	
+	bIsDataValid = GameProjectUtils::IsValidClassNameForCreation(EntityName, *ModuleContextInfo, InvalidEntityNames, ErrorMessage);	
 }
