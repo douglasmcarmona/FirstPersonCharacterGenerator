@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Douglas Mendes Carmona All Rights Reserved.
+
 #include "FirstPersonCharacterGenerator.h"
 
 #include "ToolMenus.h"
