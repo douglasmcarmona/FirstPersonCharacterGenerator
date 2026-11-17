@@ -2,12 +2,14 @@
 
 #include "FirstPersonCharacterGenerator.h"
 
+#include "GameProjectUtils.h"
 #include "ToolMenus.h"
 #include "WorkspaceMenuStructure.h"
 #include "WorkspaceMenuStructureModule.h"
 #include "Blueprint/UserWidget.h"
 #include "Framework/Commands/UIAction.h"
 #include "Interfaces/IPluginManager.h"
+#include "Interfaces/DI/FPCharacterGeneratorDIResolver.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "UI/FPCharacterGeneratorWidget.h"
 #include "UI/WidgetController/FPCharacterGeneratorWidgetController.h"
@@ -16,11 +18,44 @@
 
 const FName FFirstPersonCharacterGeneratorModule::FPCharacterGeneratorTabName(TEXT("First Person Character Generator"));
 
+FFirstPersonCharacterGeneratorModule& FFirstPersonCharacterGeneratorModule::Get()
+{
+	return FModuleManager::LoadModuleChecked<FFirstPersonCharacterGeneratorModule>("FirstPersonCharacterGenerator");
+}
+
+UObject* FFirstPersonCharacterGeneratorModule::GetDIResolver()
+{
+	if (!DIResolver)
+	{
+		DIResolver = TStrongObjectPtr(NewObject<UFPCharacterGeneratorDIResolver>());
+	}
+	return DIResolver.Get();
+}
+
+FModuleContextInfo FFirstPersonCharacterGeneratorModule::GetModuleContextInfo()
+{
+	if (!ModuleContextInfo)
+	{
+		TArray<FModuleContextInfo> CurrentModules = GameProjectUtils::GetCurrentProjectModules();	
+	
+		const FString ProjectName = FApp::GetProjectName();		
+		for (const FModuleContextInfo& ModuleContext : CurrentModules)
+		{
+			if (ModuleContext.ModuleName == ProjectName)
+			{
+				ModuleContextInfo = MakeShareable(new FModuleContextInfo(ModuleContext));						
+				break;
+			}
+		}
+	}
+	return *ModuleContextInfo;
+}
+
 void FFirstPersonCharacterGeneratorModule::StartupModule()
 {
 	PluginStyleSet = MakeShared<FSlateStyleSet>(FName("FirstPersonCharacterGeneratorStyle"));
-	const FString PluginDir = IPluginManager::Get().FindPlugin(TEXT("FirstPersonCharacterGenerator"))->GetBaseDir();
-	PluginStyleSet->SetContentRoot(	PluginDir / TEXT("Resources"));
+	const FString PluginDirectory = IPluginManager::Get().FindPlugin(TEXT("FirstPersonCharacterGenerator"))->GetBaseDir();
+	PluginStyleSet->SetContentRoot(	PluginDirectory / TEXT("Resources"));
 	PluginStyleSet->Set(
 		"FirstPersonCharacterGenerator.Icon",
 		new FSlateImageBrush(
@@ -33,6 +68,8 @@ void FFirstPersonCharacterGeneratorModule::StartupModule()
 	);
 
 	FSlateStyleRegistry::RegisterSlateStyle(*PluginStyleSet);
+	
+	DIResolver = TStrongObjectPtr<UFPCharacterGeneratorDIResolver>(NewObject<UFPCharacterGeneratorDIResolver>());
 	
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 		FPCharacterGeneratorTabName,
@@ -59,7 +96,6 @@ TSharedRef<SDockTab> FFirstPersonCharacterGeneratorModule::SpawnGeneratorTab(con
 	if (!GeneratorWidget) return GetErrorTab(Args);
 	
 	GeneratorWidget->SetWidgetController(NewObject<UFPCharacterGeneratorWidgetController>());
-	
 	return SNew(SDockTab)
 		.TabRole(NomadTab)
 		[

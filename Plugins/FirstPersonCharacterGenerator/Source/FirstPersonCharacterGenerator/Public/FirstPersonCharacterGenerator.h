@@ -4,6 +4,8 @@
 
 #include "Modules/ModuleManager.h"
 
+struct FModuleContextInfo;
+class UFPCharacterGeneratorDIResolver;
 class UFPCharacterGeneratorWidget;
 
 class FFirstPersonCharacterGeneratorModule : public IModuleInterface
@@ -12,6 +14,10 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+	static FFirstPersonCharacterGeneratorModule& Get();
+	
+	UObject* GetDIResolver();
+	FModuleContextInfo GetModuleContextInfo();
 	
 private:
 	TSharedRef<SDockTab> SpawnGeneratorTab(const FSpawnTabArgs& Args);
@@ -19,5 +25,7 @@ private:
 	
 	static const FName FPCharacterGeneratorTabName;
 	TSharedPtr<FSlateStyleSet> PluginStyleSet;
-	TStrongObjectPtr<UFPCharacterGeneratorWidget> GeneratorWidget;	
+	TSharedPtr<FModuleContextInfo> ModuleContextInfo;
+	TStrongObjectPtr<UFPCharacterGeneratorWidget> GeneratorWidget;
+	TStrongObjectPtr<UFPCharacterGeneratorDIResolver> DIResolver;
 };

@@ -26,7 +26,8 @@ public class FirstPersonCharacterGenerator : ModuleRules
 				"Projects",
 				"UMG",
 				"GameProjectGeneration",
-				"DesktopPlatform"
+				"DesktopPlatform",
+				"EngineSettings"
 			}
 			);
 	}

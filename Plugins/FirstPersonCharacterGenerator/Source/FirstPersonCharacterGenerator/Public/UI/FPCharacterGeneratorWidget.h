@@ -55,11 +55,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	FString DefaultEntityName = FString("MyFPCharacter");
 	
-	/**
-	 * Gives the plugin context to calculate the destination of source and header files
-	 */
-	TSharedPtr<FModuleContextInfo> ModuleContextInfo;
-	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UObject> WidgetController;
 };

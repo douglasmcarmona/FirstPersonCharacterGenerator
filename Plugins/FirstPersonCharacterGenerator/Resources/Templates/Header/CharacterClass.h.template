@@ -9,7 +9,7 @@
 class UCameraComponent;
 
 UCLASS()
-class %CLASS_MODULE_API_MACRO%%PREFIXED_CLASS_NAME% : public ACharacter
+class %CLASS_MODULE_API_MACRO% %PREFIXED_CLASS_NAME% : public ACharacter
 {
 	GENERATED_BODY()
 
