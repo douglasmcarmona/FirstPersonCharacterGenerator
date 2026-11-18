@@ -11,6 +11,10 @@ namespace FFPCharacterGeneratorGlobals
 	static FString CharacterSourceTemplate = PluginDir + FString("/Resources/Templates/Source/CharacterClass.cpp.template");
 	static FString PlayerControllerSourceTemplate = PluginDir + FString("/Resources/Templates/Source/PlayerControllerClass.cpp.template");
 	static FString PlayerControllerHeaderTemplate = PluginDir + FString("/Resources/Templates/Header/PlayerControllerClass.h.template");
+	static FString CharacterString = FString("Character");
+	static FString PlayerControllerString = FString("PlayerController");
+	static FString HeaderExtension = FString(".h");
+	static FString SourceExtension = FString(".cpp");
 };
 
 USTRUCT(Blueprintable, BlueprintType)

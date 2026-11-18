@@ -32,8 +32,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ValidateData(const FString& EntityName, 
 		const FString& Path, 
-		FString& HeaderFile, 
-		FString& SourceFile,
+		FString& CharacterHeaderFile, 
+		FString& CharacterSourceFile,
+		FString& PlayerControllerHeaderFile, 
+		FString& PlayerControllerSourceFile,		
 		bool& bIsDataValid,
 		FText& ErrorMessage) const;
 
@@ -53,7 +55,7 @@ protected:
 	 * Initial entity name
 	 */
 	UPROPERTY(BlueprintReadOnly)
-	FString DefaultEntityName = FString("MyFPCharacter");
+	FString DefaultEntityName = FString("MyFP");
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UObject> WidgetController;

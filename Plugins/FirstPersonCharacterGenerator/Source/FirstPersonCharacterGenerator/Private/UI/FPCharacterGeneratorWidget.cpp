@@ -4,6 +4,12 @@
 #include "FirstPersonCharacterGenerator.h"
 #include "GameProjectUtils.h"
 #include "SourceCodeNavigation.h"
+#include "Types/FPCharacterGeneratorTypes.h"
+
+#define MAKE_FILE_PATH(Class, HeaderOrSource) \
+Class##HeaderOrSource##File = Default##HeaderOrSource##Path + \
+FString(#Class) /= EntityName + FFPCharacterGeneratorGlobals::Class##String + \
+FFPCharacterGeneratorGlobals::HeaderOrSource##Extension;
 
 UFPCharacterGeneratorWidget::UFPCharacterGeneratorWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -20,11 +26,15 @@ void UFPCharacterGeneratorWidget::SetWidgetController(UObject* InWidgetControlle
 	WidgetController = InWidgetController;
 }
 
-void UFPCharacterGeneratorWidget::ValidateData(const FString& EntityName, const FString& Path, FString& HeaderFile,
-                                               FString& SourceFile, bool& bIsDataValid, FText& ErrorMessage) const
+void UFPCharacterGeneratorWidget::ValidateData(const FString& EntityName, const FString& Path,
+	FString& CharacterHeaderFile, FString& CharacterSourceFile, FString& PlayerControllerHeaderFile,
+	FString& PlayerControllerSourceFile, bool& bIsDataValid, FText& ErrorMessage) const
 {
-	HeaderFile = DefaultHeaderPath + Path /= EntityName + FString(".h");
-	SourceFile = DefaultSourcePath + Path /= EntityName + FString(".cpp");
+	MAKE_FILE_PATH(Character, Header)
+	MAKE_FILE_PATH(Character, Source);
+	MAKE_FILE_PATH(PlayerController, Header)
+	MAKE_FILE_PATH(PlayerController, Source)
+	
 	const TSet<FString> InvalidEntityNames = FSourceCodeNavigation::GetSourceFileDatabase().GetDisallowedHeaderNames();
 	const FModuleContextInfo& ModuleContextInfo = FFirstPersonCharacterGeneratorModule::Get().GetModuleContextInfo();
 	
