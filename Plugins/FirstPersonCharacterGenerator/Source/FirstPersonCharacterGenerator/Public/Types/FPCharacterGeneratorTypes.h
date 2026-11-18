@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "FirstPersonCharacterGenerator.h"
+#include "GameProjectUtils.h"
 #include "Interfaces/IPluginManager.h"
 #include "FPCharacterGeneratorTypes.generated.h"
  
@@ -14,7 +16,19 @@ namespace FFPCharacterGeneratorGlobals
 	static FString CharacterString = FString("Character");
 	static FString PlayerControllerString = FString("PlayerController");
 	static FString HeaderExtension = FString(".h");
-	static FString SourceExtension = FString(".cpp");
+	static FString SourceExtension = FString(".cpp");	
+	inline FString DefaultHeaderPath;
+	inline FString DefaultSourcePath;	
+	inline void InitDefaultPaths()
+	{
+		const FModuleContextInfo& ModuleContextInfo = FFirstPersonCharacterGeneratorModule::Get().GetModuleContextInfo();
+		GameProjectUtils::CalculateSourcePaths(
+			ModuleContextInfo.ModuleSourcePath,
+			ModuleContextInfo,
+			DefaultHeaderPath, 
+			DefaultSourcePath);
+	}
+	
 };
 
 USTRUCT(Blueprintable, BlueprintType)

@@ -7,18 +7,13 @@
 #include "Types/FPCharacterGeneratorTypes.h"
 
 #define MAKE_FILE_PATH(Class, HeaderOrSource) \
-Class##HeaderOrSource##File = Default##HeaderOrSource##Path + \
+Class##HeaderOrSource##File = FFPCharacterGeneratorGlobals::Default##HeaderOrSource##Path + \
 FString(#Class) /= EntityName + FFPCharacterGeneratorGlobals::Class##String + \
 FFPCharacterGeneratorGlobals::HeaderOrSource##Extension;
 
 UFPCharacterGeneratorWidget::UFPCharacterGeneratorWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	const FModuleContextInfo& ModuleContextInfo = FFirstPersonCharacterGeneratorModule::Get().GetModuleContextInfo();
-	GameProjectUtils::CalculateSourcePaths(
-		ModuleContextInfo.ModuleSourcePath,
-		ModuleContextInfo,
-		DefaultHeaderPath, 
-		DefaultSourcePath);
+	FFPCharacterGeneratorGlobals::InitDefaultPaths();
 }
 
 void UFPCharacterGeneratorWidget::SetWidgetController(UObject* InWidgetController)
@@ -38,8 +33,8 @@ void UFPCharacterGeneratorWidget::ValidateData(const FString& EntityName, const 
 	const TSet<FString> InvalidEntityNames = FSourceCodeNavigation::GetSourceFileDatabase().GetDisallowedHeaderNames();
 	const FModuleContextInfo& ModuleContextInfo = FFirstPersonCharacterGeneratorModule::Get().GetModuleContextInfo();
 	
-	bIsDataValid = FPaths::ValidatePath(DefaultHeaderPath + Path, &ErrorMessage);
-	if (!bIsDataValid) return;
+	// bIsDataValid = FPaths::ValidatePath(DefaultHeaderPath + Path, &ErrorMessage);
+	// if (!bIsDataValid) return;
 	
 	bIsDataValid = GameProjectUtils::IsValidClassNameForCreation(EntityName, ModuleContextInfo, InvalidEntityNames, ErrorMessage);	
 }
