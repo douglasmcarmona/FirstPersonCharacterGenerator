@@ -44,6 +44,20 @@ struct FFPCharacterGeneratorFeatures
 };
 
 USTRUCT(Blueprintable, BlueprintType)
+struct FGeneratedFile
+{
+	GENERATED_BODY();
+	
+	UPROPERTY(BlueprintReadWrite)
+	FString ClassFileTypeId;
+	
+	UPROPERTY(BlueprintReadWrite)
+	FString FullFileName;
+	
+	FString FileContent;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
 struct FFPCharacterGeneratorMetadata
 {
 	GENERATED_BODY();
@@ -52,11 +66,22 @@ struct FFPCharacterGeneratorMetadata
 	FString EntityName;
 	
 	UPROPERTY(BlueprintReadWrite)
-	FString HeaderPath;
-	
-	UPROPERTY(BlueprintReadWrite)
-	FString SourcePath;
+	TArray<FGeneratedFile> GeneratedFiles;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FFPCharacterGeneratorFeatures Features;
+};
+
+UENUM(BlueprintType)
+enum class EClass : uint8
+{
+	Character UMETA(DisplayName = "Character"),
+	PlayerController UMETA(DisplayName = "PlayerController"),
+};
+
+UENUM(BlueprintType)
+enum class EClassFileType : uint8
+{
+	Header UMETA(DisplayName = "Header"),
+	Source UMETA(DisplayName = "Source")
 };

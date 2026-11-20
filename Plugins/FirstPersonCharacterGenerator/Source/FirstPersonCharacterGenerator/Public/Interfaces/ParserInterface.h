@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "../Public/Types/FPCharacterGeneratorTypes.h"
 #include "ParserInterface.generated.h"
 
 struct FFPCharacterGeneratorMetadata;
@@ -23,5 +24,5 @@ class FIRSTPERSONCHARACTERGENERATOR_API IParserInterface
 	GENERATED_BODY()
 	
 public:
-	virtual bool Parse(const FFPCharacterGeneratorMetadata& Metadata, TMap<FString, FString>& OutGeneratedFiles, FText& ErrorMessage) = 0;
+	virtual void Parse(FFPCharacterGeneratorMetadata& Metadata) = 0;
 };

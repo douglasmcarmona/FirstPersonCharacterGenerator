@@ -6,12 +6,7 @@
 #include "SourceCodeNavigation.h"
 #include "Types/FPCharacterGeneratorTypes.h"
 
-#define MAKE_FILE_PATH(Class, HeaderOrSource) \
-Class##HeaderOrSource##File = FFPCharacterGeneratorGlobals::Default##HeaderOrSource##Path + \
-FString(#Class) /= EntityName + FFPCharacterGeneratorGlobals::Class##String + \
-FFPCharacterGeneratorGlobals::HeaderOrSource##Extension;
-
-UFPCharacterGeneratorWidget::UFPCharacterGeneratorWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+void UFPCharacterGeneratorWidget::InitDefaultPaths()
 {
 	FFPCharacterGeneratorGlobals::InitDefaultPaths();
 }
@@ -21,20 +16,34 @@ void UFPCharacterGeneratorWidget::SetWidgetController(UObject* InWidgetControlle
 	WidgetController = InWidgetController;
 }
 
-void UFPCharacterGeneratorWidget::ValidateData(const FString& EntityName, const FString& Path,
-	FString& CharacterHeaderFile, FString& CharacterSourceFile, FString& PlayerControllerHeaderFile,
-	FString& PlayerControllerSourceFile, bool& bIsDataValid, FText& ErrorMessage) const
+FString UFPCharacterGeneratorWidget::GetFullFilePath(const FString& EntityName, EClass Class,
+	EClassFileType ClassFileType)
 {
-	MAKE_FILE_PATH(Character, Header)
-	MAKE_FILE_PATH(Character, Source);
-	MAKE_FILE_PATH(PlayerController, Header)
-	MAKE_FILE_PATH(PlayerController, Source)
+	FString DefaultPath;
+	FString FileExtension;
+	FString ClassString = UEnum::GetValueAsString(Class).Replace(TEXT("EClass::"),TEXT(""));
+	switch (ClassFileType)
+	{
+	case EClassFileType::Header:
+		DefaultPath = FFPCharacterGeneratorGlobals::DefaultHeaderPath;
+		FileExtension = FFPCharacterGeneratorGlobals::HeaderExtension;
+		break;
+		
+	case EClassFileType::Source:
+		DefaultPath = FFPCharacterGeneratorGlobals::DefaultSourcePath;
+		FileExtension = FFPCharacterGeneratorGlobals::SourceExtension;
+		break;
+		
+	default: break;		
+	}
 	
+	return DefaultPath /= ClassString /= EntityName + ClassString + FileExtension;
+}
+
+bool UFPCharacterGeneratorWidget::ValidateEntityName(const FString& EntityName, FText& ErrorMessage)
+{
 	const TSet<FString> InvalidEntityNames = FSourceCodeNavigation::GetSourceFileDatabase().GetDisallowedHeaderNames();
 	const FModuleContextInfo& ModuleContextInfo = FFirstPersonCharacterGeneratorModule::Get().GetModuleContextInfo();
+	return GameProjectUtils::IsValidClassNameForCreation(EntityName, ModuleContextInfo, InvalidEntityNames, ErrorMessage);
 	
-	// bIsDataValid = FPaths::ValidatePath(DefaultHeaderPath + Path, &ErrorMessage);
-	// if (!bIsDataValid) return;
-	
-	bIsDataValid = GameProjectUtils::IsValidClassNameForCreation(EntityName, ModuleContextInfo, InvalidEntityNames, ErrorMessage);	
 }
