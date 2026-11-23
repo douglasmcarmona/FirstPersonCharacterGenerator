@@ -17,5 +17,5 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorWidgetController : 
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void CreateEntity(const FFPCharacterGeneratorMetadata& Metadata);
+	void CreateEntity(UPARAM(ref) FFPCharacterGeneratorMetadata& Metadata);
 };

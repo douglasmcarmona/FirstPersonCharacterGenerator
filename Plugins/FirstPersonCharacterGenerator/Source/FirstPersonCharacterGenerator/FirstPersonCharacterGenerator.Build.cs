@@ -10,7 +10,7 @@ public class FirstPersonCharacterGenerator : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "CoreUObject", "Engine"
+				"Core", "CoreUObject", "Engine", "GameProjectGeneration", "UMG"
 			}
 			);
 			
@@ -24,9 +24,9 @@ public class FirstPersonCharacterGenerator : ModuleRules
 				"SlateCore",
 				"WorkspaceMenuStructure",
 				"Projects",
-				"UMG",
 				"GameProjectGeneration",
-				"DesktopPlatform"
+				"DesktopPlatform",
+				"EngineSettings"
 			}
 			);
 	}

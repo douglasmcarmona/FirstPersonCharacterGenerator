@@ -9,17 +9,15 @@
 class UCameraComponent;
 
 UCLASS()
-class %CLASS_MODULE_API_MACRO%%PREFIXED_CLASS_NAME% : public ACharacter
+class %CLASS_MODULE_API_MACRO% %PREFIXED_CLASS_NAME% : public ACharacter
 {
 	GENERATED_BODY()
 
-public:	
-	%PREFIXED_CLASS_NAME%();	
-    virtual void Tick(float DeltaTime) override;
+public:
+	%PREFIXED_CLASS_NAME%();
+	virtual void BeginPlay() override;
 
 protected:	
-	virtual void BeginPlay() override;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> CameraComponent;
 };

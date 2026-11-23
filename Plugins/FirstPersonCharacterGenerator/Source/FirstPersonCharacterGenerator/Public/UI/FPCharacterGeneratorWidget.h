@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Types/FPCharacterGeneratorTypes.h"
 #include "FPCharacterGeneratorWidget.generated.h"
 
 struct FModuleContextInfo;
@@ -16,27 +17,17 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorWidget : public UUs
 	GENERATED_BODY()
 	
 public:
-	UFPCharacterGeneratorWidget(const FObjectInitializer& ObjectInitializer);
+	UFUNCTION(BlueprintCallable)
+	void InitDefaultPaths();
 	void SetWidgetController(UObject* InWidgetController);
 	
 protected:
-	/**
-	 * Updates the UI after assembling and validating incoming data
-	 * @param EntityName Used as the file name
-	 * @param Path Subfolder path structure which the files must follow
-	 * @param HeaderFile Output parameter with the resulting header file name
-	 * @param SourceFile Output parameter with the resulting source file name
-	 * @param bIsDataValid True if file name and path validation succeeded. False otherwise
-	 * @param ErrorMessage Reason why the validation didn't succeed
-	 */
+	UFUNCTION(BlueprintPure)
+	FString GetFullFilePath(const FString& EntityName, EClass Class, EClassFileType ClassFileType);
+	
 	UFUNCTION(BlueprintCallable)
-	void ValidateData(const FString& EntityName, 
-		const FString& Path, 
-		FString& HeaderFile, 
-		FString& SourceFile,
-		bool& bIsDataValid,
-		FText& ErrorMessage) const;
-
+	bool ValidateEntityName(const FString& EntityName, FText& ErrorMessage);
+	
 	/**
 	 * Initial header path. Defaults to MainModule/Public
 	 */
@@ -53,12 +44,7 @@ protected:
 	 * Initial entity name
 	 */
 	UPROPERTY(BlueprintReadOnly)
-	FString DefaultEntityName = FString("MyFPCharacter");
-	
-	/**
-	 * Gives the plugin context to calculate the destination of source and header files
-	 */
-	TSharedPtr<FModuleContextInfo> ModuleContextInfo;
+	FString DefaultEntityName = FString("MyFP");
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UObject> WidgetController;
