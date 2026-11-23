@@ -7,7 +7,7 @@
 {
 	PrimaryActorTick.bCanEverTick = false;
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("Camera");
-    CameraComponent->SetupAttachment(GetRootComponent()));
+    CameraComponent->SetupAttachment(GetRootComponent());
     CameraComponent->SetRelativeLocation(FVector(0.f, 0.f, 90.f));
     CameraComponent->bUsePawnControlRotation = true;
 }

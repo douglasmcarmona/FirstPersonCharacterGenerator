@@ -51,7 +51,7 @@ void UFPCharacterGeneratorParser::ParseCharacterSource(const FString& EntityName
 	FString Template;
 	FFileHelper::LoadFileToString(Template, *FFPCharacterGeneratorGlobals::CharacterSourceTemplate);
 	FString Result = Template.Replace(TEXT("%COPYRIGHT_LINE%"), *MakeCopyrightLine());
-	Result = Result.Replace(TEXT("%MY_HEADER_INCLUDE_DIRECTIVE%"), *("#include " + EntityName + "Character.h"));
+	Result = Result.Replace(TEXT("%MY_HEADER_INCLUDE_DIRECTIVE%"), *("#include \"Character/"+ EntityName + "Character.h\""));
 	Result = Result.Replace(TEXT("%PREFIXED_CLASS_NAME%"), *("A" + EntityName + "Character"));	
 	GeneratedFile.FileContent = Result;
 }
@@ -77,14 +77,10 @@ void UFPCharacterGeneratorParser::ParsePlayerControllerSource(const FString& Ent
 		"#include \"EnhancedInputComponent.h\"\n"
 		"#include \"EnhancedInputSubsystems.h\"\n"
 		"#include \"InputActionValue.h\"\n");
-	const FString CharacterIncludes = TEXT(
-		"#include \"GameFramework/Character.h\"\n"
-		"#include \"GameFramework/CharacterMovementComponent.h\"\n");	
 	
-	FString Result = Template.Replace(TEXT("%COPYRIGHT_LINE%"), *MakeCopyrightLine());	
-	Result = Result.Replace(TEXT("%ENHANCED_INPUT_INCLUDE_DIRECTIVES%"), *EnhancedInputIncludes);
-	Result = Result.Replace(TEXT("%CHARACTER_INCLUDE_DIRECTIVES%"), *CharacterIncludes);
-	Result = Result.Replace(TEXT("%MY_HEADER_INCLUDE_DIRECTIVE%"), *("#include " + EntityName + "PlayerController.h" ));
+	FString Result = Template.Replace(TEXT("%COPYRIGHT_LINE%"), *MakeCopyrightLine());
+	Result = Result.Replace(TEXT("%MY_HEADER_INCLUDE_DIRECTIVE%"), *("#include \"PlayerController/" + EntityName + "PlayerController.h\"" ));
+	Result = Result.Replace(TEXT("%ENHANCED_INPUT_INCLUDE_DIRECTIVES%"), *EnhancedInputIncludes);		
 	Result = Result.Replace(TEXT("%PREFIXED_CLASS_NAME%"), *("A" + EntityName + "PlayerController"));
 	Result = Result.Replace(TEXT("%SETUP_PLAYER_INPUT_COMPONENT%"), *MakeSetupPlayerInputComponent("A" + EntityName + "PlayerController"));
 	Result = Result.Replace(TEXT("%INPUT_ACTION_BOUND_FUNCTION_DEFINITIONS%"), *MakeInputActionBoundFunctionDefinitions("A" + EntityName + "PlayerController"));	
@@ -120,18 +116,17 @@ FString UFPCharacterGeneratorParser::MakeInputActionProperties() const
 FString UFPCharacterGeneratorParser::MakeInputActionBoundFunctionDefinitions(const FString& PrefixedClassName) const
 {
 	FString MoveFunctionCode = TEXT(
-	"void %PREFIXED_CLASS_NAME%::Move(const FInputActionValue& Value)\n"
+	"void %PREFIXED_CLASS_NAME%::Move(const FInputActionValue& InputValue)\n"
 	"{\n"
-	"    const FVector2D MovementVector = Value.Get<FVector2D>();\n"
+	"    const FVector2D MovementVector = InputValue.Get<FVector2D>();\n"
 	"    APawn* ControlledPawn = GetPawn();\n"
 	"\n"
 	"    if (!ControlledPawn)\n"
 	"    {\n"
 	"        return;\n"
 	"    }\n"
-	"\n"
-	"    const FRotator ControlRotation = GetControlRotation();\n"
-	"    const FRotator YawRotation(0.0f, ControlRotation.Yaw, 0.0f);\n"
+	"\n"	
+	"    const FRotator YawRotation(0.0f, GetControlRotation().Yaw, 0.0f);\n"
 	"\n"
 	"    const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);\n"
 	"    const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);\n"
@@ -141,12 +136,12 @@ FString UFPCharacterGeneratorParser::MakeInputActionBoundFunctionDefinitions(con
 	"}\n\n");
 	
 	FString LookFunctionCode = TEXT(
-	"void %PREFIXED_CLASS_NAME%::Look(const FInputActionValue& Value)\n"
+	"void %PREFIXED_CLASS_NAME%::LookAround(const FInputActionValue& InputValue)\n"
 	"{\n"
-	"    const FVector2D LookAxisVector = Value.Get<FVector2D>();\n"
+	"    const FVector2D LookAxisVector = InputValue.Get<FVector2D>();\n"
 	"\n"
-	"    AddYawInput(LookAxisVector.X);\n"
-	"    AddPitchInput(LookAxisVector.Y);\n"
+	"    AddYawInput(LookAxisVector.X * CameraMovementSensitivity);\n"
+	"    AddPitchInput(LookAxisVector.Y * CameraMovementSensitivity);\n"
 	"}\n");
 	
 	return (MoveFunctionCode + LookFunctionCode).Replace(TEXT("%PREFIXED_CLASS_NAME%"), *PrefixedClassName);
@@ -159,12 +154,12 @@ FString UFPCharacterGeneratorParser::MakeSetupPlayerInputComponent(const FString
 	"{\n"
 	"    Super::SetupInputComponent();\n"
 	"\n"
-	"    UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);\n"
+	"    UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);\n"
 	"\n"
 	"    if (EnhancedInputComponent && MoveAction && LookAroundAction)\n"
 	"    {\n"
 	"        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &%PREFIXED_CLASS_NAME%::Move);\n"
-	"        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &%PREFIXED_CLASS_NAME%::LookAround);\n"
+	"        EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Triggered, this, &%PREFIXED_CLASS_NAME%::LookAround);\n"
 	"    }\n"	
 	"}");
 	return Result.Replace(TEXT("%PREFIXED_CLASS_NAME%"), *PrefixedClassName);

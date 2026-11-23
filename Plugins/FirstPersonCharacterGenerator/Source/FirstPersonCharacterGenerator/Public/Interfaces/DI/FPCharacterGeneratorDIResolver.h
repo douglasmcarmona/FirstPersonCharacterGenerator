@@ -14,8 +14,12 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorDIResolver : public
 public:
 	UFPCharacterGeneratorDIResolver();
 	UObject* GetParser();
+	UObject* GetFileSystem();
 	
 private:
 	UPROPERTY()
 	TObjectPtr<UObject> Parser;
+	
+	UPROPERTY()
+	TObjectPtr<UObject> FileSystem;
 };
