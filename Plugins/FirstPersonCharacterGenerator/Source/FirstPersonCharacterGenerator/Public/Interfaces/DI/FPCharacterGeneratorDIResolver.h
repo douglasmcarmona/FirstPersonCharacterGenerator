@@ -15,6 +15,7 @@ public:
 	UFPCharacterGeneratorDIResolver();
 	UObject* GetParser();
 	UObject* GetFileSystem();
+	UObject* GetProjectReloader();
 	
 private:
 	UPROPERTY()
@@ -22,4 +23,7 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<UObject> FileSystem;
+	
+	UPROPERTY()
+	TObjectPtr<UObject> ProjectReloader;
 };
