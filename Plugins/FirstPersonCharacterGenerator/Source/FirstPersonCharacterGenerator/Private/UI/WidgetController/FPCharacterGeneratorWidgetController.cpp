@@ -3,6 +3,7 @@
 #include "UI/WidgetController/FPCharacterGeneratorWidgetController.h"
 
 #include "FirstPersonCharacterGenerator.h"
+#include "SourceCodeNavigation.h"
 #include "Interfaces/FileSystemInterface.h"
 #include "Interfaces/ParserInterface.h"
 #include "Interfaces/ProjectReloaderInterface.h"
@@ -16,9 +17,11 @@ void UFPCharacterGeneratorWidgetController::CreateEntity(FFPCharacterGeneratorMe
 	IParserInterface* Parser = Cast<IParserInterface>(DIResolver->GetParser());
 	IFileSystemInterface* FileSystem = Cast<IFileSystemInterface>(DIResolver->GetFileSystem());
 	IProjectReloaderInterface* ProjectReloader = Cast<IProjectReloaderInterface>(DIResolver->GetProjectReloader());
+	IFileManager& FileManager = IFileManager::Get();
 	
 	FText ErrorMessage;
 	Parser->Parse(Metadata);
+	TArray<FString> AbsoluteFilePaths;
 	
 	FScopedSlowTask SlowTask(2.f, LOCTEXT("CreatingFiles", "Creating new entity files..."));
 	SlowTask.MakeDialog();
@@ -26,10 +29,12 @@ void UFPCharacterGeneratorWidgetController::CreateEntity(FFPCharacterGeneratorMe
 	for (const FGeneratedFile& File : Metadata.GeneratedFiles)
 	{
 		FileSystem->SaveFile(File.FullFileName, File.FileContent);
-	}	
-	SlowTask.EnterProgressFrame(1.f, LOCTEXT("Compiling","Compiling new C++ classes..."));	
+		AbsoluteFilePaths.Add(FileManager.ConvertToAbsolutePathForExternalAppForRead(*File.FullFileName));	
+	}
+	SlowTask.EnterProgressFrame(1.f, LOCTEXT("Compiling", "Compiling new C++ classes..."));
 	if (!ProjectReloader->ReloadProject(ErrorMessage))
 	{
 		FMessageDialog::Open(EAppMsgType::Ok, ErrorMessage);
 	}
+	FSourceCodeNavigation::OpenSourceFilesAsync(AbsoluteFilePaths);
 }
