@@ -17,5 +17,5 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorProjectReloader : p
 
 public:
 	virtual bool ReloadProject(FText& ErrorMessage) override;
-	
+	virtual bool GenerateProjectFiles() override;
 };

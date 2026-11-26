@@ -51,9 +51,7 @@ bool UFPCharacterGeneratorProjectReloader::ReloadProject(FText& ErrorMessage)
 		IHotReloadInterface& HotReloadSupport = FModuleManager::LoadModuleChecked<IHotReloadInterface>("HotReload");
 		if (!HotReloadSupport.RecompileModule(*GameModuleName, *GWarn, ERecompileModuleFlags::ReloadAfterRecompile | ERecompileModuleFlags::ForceCodeProject))
 		{
-			ErrorMessage = FText::FromString("Failed to compile newly created game module");			
-			// OutFailReason = LOCTEXT("FailedToCompileNewGameModule", "Failed to compile newly created game module.");
-			// return EAddCodeToProjectResult::FailedToHotReload;
+			ErrorMessage = LOCTEXT("FailedToCompileNewGameModule", "Failed to compile newly created game module.");
 			return false;
 		}
 
@@ -107,4 +105,58 @@ bool UFPCharacterGeneratorProjectReloader::ReloadProject(FText& ErrorMessage)
 		}		
 	}
 	return true;
+}
+
+bool UFPCharacterGeneratorProjectReloader::GenerateProjectFiles()
+{
+#if PLATFORM_WINDOWS
+
+	const FString ProjectFile = FPaths::GetProjectFilePath();
+
+	// Unreal Engine installation directory.
+	const FString EngineDir = FPaths::EngineDir();
+	const FString Generator = EngineDir / TEXT("Build/BatchFiles/GenerateProjectFiles.bat");
+
+	if (!FPaths::FileExists(Generator) || !FPaths::FileExists(ProjectFile))
+	{
+		return false;
+	}
+
+	const FString Parameters = FString::Printf(
+		TEXT("/C \"\"%s\" \"%s\" -CurrentPlatform\""),
+		*Generator,
+		*ProjectFile
+	);
+
+	FProcHandle Proc = FPlatformProcess::CreateProc(
+		TEXT("cmd.exe"),
+		*Parameters,
+		true,   // bLaunchDetached
+		false,  // bLaunchHidden
+		false,  // bLaunchReallyHidden
+		nullptr,
+		0,
+		nullptr,
+		nullptr
+	);
+
+	if (!Proc.IsValid())
+	{
+		return false;
+	}
+
+	// Synchronous wait: project files must finish generating
+	// before proceeding.
+	FPlatformProcess::WaitForProc(Proc);
+
+	int32 ReturnCode = -1;
+	FPlatformProcess::GetProcReturnCode(Proc, &ReturnCode);
+
+	FPlatformProcess::CloseProc(Proc);
+
+	return ReturnCode == 0;
+
+#else
+	return false;
+#endif
 }

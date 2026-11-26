@@ -21,4 +21,5 @@ class FIRSTPERSONCHARACTERGENERATOR_API IProjectReloaderInterface
 	
 public:
 	virtual bool ReloadProject(FText& ErrorMessage) = 0;
+	virtual bool GenerateProjectFiles() = 0;
 };
