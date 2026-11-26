@@ -25,61 +25,69 @@ namespace FFPCharacterGeneratorGlobals
 		GameProjectUtils::CalculateSourcePaths(
 			ModuleContextInfo.ModuleSourcePath,
 			ModuleContextInfo,
-			DefaultHeaderPath, 
+			DefaultHeaderPath,
 			DefaultSourcePath);
+		if (DefaultHeaderPath == DefaultSourcePath)
+		{
+			DefaultHeaderPath /= FString("Public");
+			DefaultSourcePath /= FString("Private");
+		}
 	}
 	
 };
 
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(Blueprintable, BlueprintType, Category="First person character generator")
 struct FFPCharacterGeneratorFeatures
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="First person character generator|Features")
 	bool bHasMovement = true;
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="First person character generator|Features")
 	bool bHasCameraControl = true;
+	
+	UPROPERTY(BlueprintReadWrite, Category="First person character generator|Features")
+	bool bOpenIDE = false;
 };
 
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(Blueprintable, BlueprintType, Category="First person character generator")
 struct FGeneratedFile
 {
 	GENERATED_BODY();
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="Generated file")
 	FString ClassFileTypeId;
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="Generated file")
 	FString FullFileName;
 	
 	FString FileContent;
 };
 
-USTRUCT(Blueprintable, BlueprintType)
+USTRUCT(Blueprintable, BlueprintType, Category="First person character generator")
 struct FFPCharacterGeneratorMetadata
 {
 	GENERATED_BODY();
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="Metadata")
 	FString EntityName;
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="Metadata")
 	TArray<FGeneratedFile> GeneratedFiles;
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category="Metadata")
 	FFPCharacterGeneratorFeatures Features;
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType, Category="First person character generator")
 enum class EClass : uint8
 {
 	Character UMETA(DisplayName = "Character"),
 	PlayerController UMETA(DisplayName = "PlayerController"),
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType, Category="First person character generator")
 enum class EClassFileType : uint8
 {
 	Header UMETA(DisplayName = "Header"),
