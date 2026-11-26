@@ -17,35 +17,35 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorWidget : public UUs
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="First person character generator")
 	void InitDefaultPaths();
 	void SetWidgetController(UObject* InWidgetController);
 	
 protected:
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category="First person character generator")
 	FString GetFullFilePath(const FString& EntityName, EClass Class, EClassFileType ClassFileType);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="First person character generator")
 	bool ValidateEntityName(const FString& EntityName, FText& ErrorMessage);
 	
 	/**
 	 * Initial header path. Defaults to MainModule/Public
 	 */
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="First person character generator")
 	FString DefaultHeaderPath;
 	
 	/**
 	 * Initial source path. Defaults to MainModule/Private
 	 */
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="First person character generator")
 	FString DefaultSourcePath;
 
 	/**
 	 * Initial entity name
 	 */
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="First person character generator")
 	FString DefaultEntityName = FString("MyFP");
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="First person character generator")
 	TObjectPtr<UObject> WidgetController;
 };
