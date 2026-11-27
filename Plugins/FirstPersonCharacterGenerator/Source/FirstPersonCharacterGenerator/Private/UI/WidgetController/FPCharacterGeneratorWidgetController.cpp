@@ -52,5 +52,5 @@ void UFPCharacterGeneratorWidgetController::CreateEntity(FFPCharacterGeneratorMe
 		SlowTask.EnterProgressFrame();
 	}
 	SlowTask.EnterProgressFrame(1.f, LOCTEXT("CreateAssets", "Creating assets"));
-	AssetCreator->CreateAssets(Metadata.EntityName);
+	AssetCreator->CreateAssets(Metadata);
 }

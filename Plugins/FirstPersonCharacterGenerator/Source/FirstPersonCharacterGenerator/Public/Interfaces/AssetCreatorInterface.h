@@ -13,6 +13,8 @@ class UAssetCreatorInterface : public UInterface
 	GENERATED_BODY()
 };
 
+struct FFPCharacterGeneratorMetadata;
+
 /**
  * 
  */
@@ -22,5 +24,5 @@ class FIRSTPERSONCHARACTERGENERATOR_API IAssetCreatorInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void CreateAssets(const FString& EntityName) = 0;
+	virtual void CreateAssets(const FFPCharacterGeneratorMetadata& Metadata) = 0;
 };

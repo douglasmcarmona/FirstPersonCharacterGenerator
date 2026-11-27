@@ -8,17 +8,18 @@
 #include "InputAction.h"
 #include "InputEditorModule.h"
 #include "InputMappingContext.h"
-#include "UObject/SavePackage.h"
+#include "Factories/BlueprintFactory.h"
+#include "Types/FPCharacterGeneratorTypes.h"
 
 #define GET_ASSET_TOOLS() \
 	FAssetToolsModule& AssetToolsModule = FModuleManager::Get().LoadModuleChecked<FAssetToolsModule>(TEXT("AssetTools")); \
 	IAssetTools& AssetTools = AssetToolsModule.Get();
 
-void UFPCharacterGeneratorAssetCreator::CreateAssets(const FString& EntityName)
+void UFPCharacterGeneratorAssetCreator::CreateAssets(const FFPCharacterGeneratorMetadata& Metadata)
 {
 	UInputAction* MoveAction = GetInputAction(TEXT("IA_Move"), EInputActionValueType::Axis2D);
 	UInputAction* LookAroundAction = GetInputAction(TEXT("IA_Look"), EInputActionValueType::Axis2D);
-	UInputMappingContext* InputMappingContext = GetInputMappingContext(EntityName);
+	UInputMappingContext* InputMappingContext = GetInputMappingContext(Metadata.EntityName);
 	
 	InputMappingContext->Modify();
 	FEnhancedActionKeyMapping& W_Mapping = InputMappingContext->MapKey(MoveAction, EKeys::W);
@@ -35,15 +36,8 @@ void UFPCharacterGeneratorAssetCreator::CreateAssets(const FString& EntityName)
 	NegateMouseY->bY = true;
 	NegateMouseY->bZ = false;
 	MouseXY_Mapping.Modifiers.Add(NegateMouseY);
-	
-	//
-	// UPackage* Package = MoveAction->GetPackage();
-	// Package->MarkPackageDirty();
-	// const FString PackageFilename = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
-	// FSavePackageArgs SaveArgs;	
-	// SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-	// checkf(UPackage::SavePackage(Package, MoveAction, *PackageFilename, SaveArgs), TEXT("Failed to save MoveAction"));
-	// checkf(UPackage::SavePackage(Package, InputMappingContext, *PackageFilename, SaveArgs), TEXT("Failed to save InputMappingContext"));	
+	GetBlueprint(Metadata, EClass::Character);
+	GetBlueprint(Metadata, EClass::PlayerController);		
 }
 
 UClass* UFPCharacterGeneratorAssetCreator::GetClassFromHeaderPath(const FString& HeaderPath)
@@ -54,6 +48,30 @@ UClass* UFPCharacterGeneratorAssetCreator::GetClassFromHeaderPath(const FString&
 	}
 	const FString ClassName = FPaths::GetBaseFilename(HeaderPath);
 	return FEditorClassUtils::GetClassFromString(ClassName);
+}
+
+UBlueprint* UFPCharacterGeneratorAssetCreator::GetBlueprint(const FFPCharacterGeneratorMetadata& Metadata, EClass Class)
+{
+	FString ClassString = UEnum::GetValueAsString(Class).Replace(TEXT("EClass::"),TEXT(""));
+	const FString HeaderPath = Metadata.GeneratedFiles.FindByPredicate([ClassString](const FGeneratedFile& File)
+	{
+		return File.ClassFileTypeId == ClassString + TEXT("Header");
+	})->FullFileName;
+	
+	UClass* ParentClass = GetClassFromHeaderPath(HeaderPath);
+	if (!ParentClass) return nullptr;
+	
+	GET_ASSET_TOOLS()
+	
+	UBlueprintFactory* Factory = NewObject<UBlueprintFactory>();
+	Factory->ParentClass = ParentClass;
+	UObject* NewCharacterBP = AssetTools.CreateAsset(
+		FString::Printf(TEXT("BP_%s%s"), *Metadata.EntityName, *ClassString),
+		FString::Printf(TEXT("/Game/%s"), *ClassString),
+		UBlueprint::StaticClass(),
+		Factory
+	);
+	return CastChecked<UBlueprint>(NewCharacterBP);
 }
 
 UInputAction* UFPCharacterGeneratorAssetCreator::GetInputAction(const FString& AssetName, EInputActionValueType ValueType)

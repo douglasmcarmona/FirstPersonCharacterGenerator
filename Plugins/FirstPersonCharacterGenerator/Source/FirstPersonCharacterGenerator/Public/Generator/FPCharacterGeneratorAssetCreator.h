@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "Interfaces/AssetCreatorInterface.h"
+#include "Types/FPCharacterGeneratorTypes.h"
 #include "UObject/Object.h"
 #include "FPCharacterGeneratorAssetCreator.generated.h"
 
@@ -17,10 +18,12 @@ class FIRSTPERSONCHARACTERGENERATOR_API UFPCharacterGeneratorAssetCreator : publ
 	GENERATED_BODY()
 	
 public:
-	virtual void CreateAssets(const FString& EntityName) override;
+	virtual void CreateAssets(const FFPCharacterGeneratorMetadata& Metadata) override;
 	
 private:
 	UClass* GetClassFromHeaderPath(const FString& HeaderPath);
+	UBlueprint* GetBlueprint(const FFPCharacterGeneratorMetadata& Metadata, EClass Class);
+	
 	UInputAction* GetInputAction(const FString& AssetName, EInputActionValueType ValueType);	
 	UInputMappingContext* GetInputMappingContext(const FString& EntityName);
 };
