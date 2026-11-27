@@ -16,6 +16,7 @@ public:
 	UObject* GetParser();
 	UObject* GetFileSystem();
 	UObject* GetProjectReloader();
+	UObject* GetAssetCreator();
 	
 private:
 	UPROPERTY()
@@ -26,4 +27,7 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<UObject> ProjectReloader;
+	
+	UPROPERTY()
+	TObjectPtr<UObject> AssetCreator;
 };

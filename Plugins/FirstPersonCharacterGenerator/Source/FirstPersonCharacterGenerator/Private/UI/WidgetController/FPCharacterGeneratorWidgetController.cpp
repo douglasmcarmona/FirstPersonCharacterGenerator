@@ -4,6 +4,7 @@
 
 #include "FirstPersonCharacterGenerator.h"
 #include "SourceCodeNavigation.h"
+#include "Interfaces/AssetCreatorInterface.h"
 #include "Interfaces/FileSystemInterface.h"
 #include "Interfaces/ParserInterface.h"
 #include "Interfaces/ProjectReloaderInterface.h"
@@ -17,13 +18,14 @@ void UFPCharacterGeneratorWidgetController::CreateEntity(FFPCharacterGeneratorMe
 	IParserInterface* Parser = Cast<IParserInterface>(DIResolver->GetParser());
 	IFileSystemInterface* FileSystem = Cast<IFileSystemInterface>(DIResolver->GetFileSystem());
 	IProjectReloaderInterface* ProjectReloader = Cast<IProjectReloaderInterface>(DIResolver->GetProjectReloader());
+	IAssetCreatorInterface* AssetCreator = Cast<IAssetCreatorInterface>(DIResolver->GetAssetCreator());
 	IFileManager& FileManager = IFileManager::Get();
 	
 	FText ErrorMessage;
 	Parser->Parse(Metadata);
 	TArray<FString> AbsoluteFilePaths;
 	
-	FScopedSlowTask SlowTask(4.f, LOCTEXT("CreatingFiles", "Creating new entity files..."));
+	FScopedSlowTask SlowTask(5.f, LOCTEXT("CreatingFiles", "Creating new entity files..."));
 	SlowTask.MakeDialog();
 	SlowTask.EnterProgressFrame(1.f, LOCTEXT("SaveFiles","Saving header and source files..."));
 	for (const FGeneratedFile& File : Metadata.GeneratedFiles)
@@ -47,6 +49,8 @@ void UFPCharacterGeneratorWidgetController::CreateEntity(FFPCharacterGeneratorMe
 	}
 	else
 	{
-		SlowTask.Destroy();
+		SlowTask.EnterProgressFrame();
 	}
+	SlowTask.EnterProgressFrame(1.f, LOCTEXT("CreateAssets", "Creating assets"));
+	AssetCreator->CreateAssets(Metadata.EntityName);
 }

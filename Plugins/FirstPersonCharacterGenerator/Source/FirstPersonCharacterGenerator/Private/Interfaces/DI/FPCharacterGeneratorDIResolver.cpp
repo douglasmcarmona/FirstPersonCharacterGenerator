@@ -3,6 +3,7 @@
 
 #include "Interfaces/DI/FPCharacterGeneratorDIResolver.h"
 
+#include "Generator/FPCharacterGeneratorAssetCreator.h"
 #include "Generator/FPCharacterGeneratorFileSystem.h"
 #include "Generator/FPCharacterGeneratorParser.h"
 #include "Generator/FPCharacterGeneratorProjectReloader.h"
@@ -12,6 +13,7 @@ UFPCharacterGeneratorDIResolver::UFPCharacterGeneratorDIResolver()
 	Parser = NewObject<UFPCharacterGeneratorParser>();
 	FileSystem = NewObject<UFPCharacterGeneratorFileSystem>();
 	ProjectReloader = NewObject<UFPCharacterGeneratorProjectReloader>();
+	AssetCreator = NewObject<UFPCharacterGeneratorAssetCreator>();
 }
 
 UObject* UFPCharacterGeneratorDIResolver::GetParser()
@@ -27,4 +29,9 @@ UObject* UFPCharacterGeneratorDIResolver::GetFileSystem()
 UObject* UFPCharacterGeneratorDIResolver::GetProjectReloader()
 {
 	return ProjectReloader;
+}
+
+UObject* UFPCharacterGeneratorDIResolver::GetAssetCreator()
+{
+	return AssetCreator;
 }
